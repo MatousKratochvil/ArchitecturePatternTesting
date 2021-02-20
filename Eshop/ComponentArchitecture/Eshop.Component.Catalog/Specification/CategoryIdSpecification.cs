@@ -4,11 +4,11 @@ using Eshop.Component.Catalog.Domain;
 
 namespace Eshop.Component.Catalog.Specification
 {
-	internal class CategorySpecification : ISpecification<Commodity, long>
+	internal class CategoryIdSpecification : ISpecification<Commodity, long>
 	{
 		private readonly int _categoryId;
 
-		public CategorySpecification(int categoryId)
+		public CategoryIdSpecification(int categoryId)
 		{
 			_categoryId = categoryId;
 		}

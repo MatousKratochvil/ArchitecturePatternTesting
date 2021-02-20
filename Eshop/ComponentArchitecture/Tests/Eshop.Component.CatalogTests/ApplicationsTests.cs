@@ -2,6 +2,7 @@
 using System.Linq;
 using System.Threading.Tasks;
 using AutoFixture;
+using Eshop.Base.Abstraction.Exceptions;
 using Eshop.Base.Abstraction.Infrastructure;
 using Eshop.Component.Catalog.Application;
 using Eshop.Component.Catalog.Domain;
@@ -62,14 +63,15 @@ namespace Eshop.Component.CatalogTests
 			
 			// Assert
 			getCategoryResponse.Should().NotBeNull();
-			getCategoryResponse.Id.Should().Be(category.Id);
-			getCategoryResponse.Data.Count().Should().Be(commoditiesCount);
+			getCategoryResponse.Value.Should().NotBeNull();
+			getCategoryResponse.Value.Id.Should().Be(category.Id);
+			getCategoryResponse.Value.Data.Count().Should().Be(commoditiesCount);
 			
 			var firstCommodity = commodities.First();
-			getCategoryResponse.Data.First().Id.Should().Be(firstCommodity.Id);
-			getCategoryResponse.Data.First().Name.Should().Be(firstCommodity.Name);
-			getCategoryResponse.Data.First().ImageLink.Should().Be(firstCommodity.ImageLink);
-			getCategoryResponse.Data.First().Description.Should().Be(firstCommodity.Description);
+			getCategoryResponse.Value.Data.First().Id.Should().Be(firstCommodity.Id);
+			getCategoryResponse.Value.Data.First().Name.Should().Be(firstCommodity.Name);
+			getCategoryResponse.Value.Data.First().ImageLink.Should().Be(firstCommodity.ImageLink);
+			getCategoryResponse.Value.Data.First().Description.Should().Be(firstCommodity.Description);
 			
 			_categoryRepository.Received(1).Load(Arg.Any<int>());
 			_commodityRepository.Received(1).LoadWhere(Arg.Any<ISpecification<Commodity, long>>());
@@ -87,12 +89,16 @@ namespace Eshop.Component.CatalogTests
 			_categoryRepository.Load(Arg.Any<int>())
 				.ReturnsNull();
 			
-			// Act, Assert
-			_ = Assert.ThrowsAsync<NullReferenceException>(async () => await mediator.Send(new GetCategoryRequest
+			// Act
+			var getCategoryResponse = await mediator.Send(new GetCategoryRequest
 			{
 				CategoryId = categoryId
-			}));
+			});
 
+			// Assert
+			getCategoryResponse.Should().NotBeNull();
+			getCategoryResponse.Exception.Should().BeOfType<NotFoundException>();
+			
 			_categoryRepository.Received(1).Load(Arg.Any<int>());
 			_commodityRepository.Received(0).LoadWhere(Arg.Any<ISpecification<Commodity, long>>());
 		}
@@ -102,8 +108,7 @@ namespace Eshop.Component.CatalogTests
 		{
 			// Arrange
 			var mediator = _serviceProvider.GetService<IMediator>();
-			const int commoditiesCount = 1;
-			
+
 			var category = _fixture.Create<Category>();
 
 			_commodityRepository.LoadWhere(Arg.Any<ISpecification<Commodity, long>>())
@@ -119,8 +124,9 @@ namespace Eshop.Component.CatalogTests
 			
 			// Assert
 			getCategoryResponse.Should().NotBeNull();
-			getCategoryResponse.Id.Should().Be(category.Id);
-			getCategoryResponse.Data.Should().BeEmpty();
+			getCategoryResponse.Value.Should().NotBeNull();
+			getCategoryResponse.Value.Id.Should().Be(category.Id);
+			getCategoryResponse.Value.Data.Should().BeEmpty();
 			
 			_categoryRepository.Received(1).Load(Arg.Any<int>());
 			_commodityRepository.Received(1).LoadWhere(Arg.Any<ISpecification<Commodity, long>>());

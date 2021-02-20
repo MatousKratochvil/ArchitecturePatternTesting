@@ -3,6 +3,8 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
+using Eshop.Base.Abstraction;
+using Eshop.Base.Abstraction.Exceptions;
 using Eshop.Base.Abstraction.Infrastructure;
 using Eshop.Component.Catalog.Domain;
 using Eshop.Component.Catalog.Specification;
@@ -10,7 +12,7 @@ using MediatR;
 
 namespace Eshop.Component.Catalog.Application
 {
-	public class GetCategoryRequest : IRequest<GetCategoryResponse>
+	public class GetCategoryRequest : IRequest<Result<GetCategoryResponse>>
 	{
 		public int CategoryId { get; set; }
 	}
@@ -33,7 +35,7 @@ namespace Eshop.Component.Catalog.Application
 		public string Name { get; set; }
 	}
 
-	internal class GetCategoryHandler : IRequestHandler<GetCategoryRequest, GetCategoryResponse>
+	internal class GetCategoryHandler : IRequestHandler<GetCategoryRequest, Result<GetCategoryResponse>>
 	{
 		private readonly IRepository<Commodity, long> _catalogItemRepository;
 		private readonly IRepository<Category, int> _categoryRepository;
@@ -48,28 +50,29 @@ namespace Eshop.Component.Catalog.Application
 				categoryRepository ?? throw new ArgumentNullException(nameof(categoryRepository));
 		}
 
-		public Task<GetCategoryResponse> Handle(GetCategoryRequest request, CancellationToken cancellationToken)
+		public Task<Result<GetCategoryResponse>> Handle(GetCategoryRequest request, CancellationToken cancellationToken)
 		{
 			var category = _categoryRepository.Load(request.CategoryId);
 			if (category == null)
-				// TODO: Change exception to better handlers affects tests
-				throw new Exception(nameof(category));
+				return Result<GetCategoryResponse>
+					.FailedTask(new NotFoundException(nameof(Category), request.CategoryId));
 
-			var categorySpecification = new CategorySpecification(request.CategoryId);
+			var categorySpecification = new CategoryIdSpecification(request.CategoryId);
 			var catalogItems = _catalogItemRepository.LoadWhere(categorySpecification);
 
-			return Task.FromResult(new GetCategoryResponse
-			{
-				Id = category.Id,
-				CategoryName = category.Name,
-				Data = catalogItems?.Select(commodity => new CategoryItem
+			return Result<GetCategoryResponse>
+				.SuccessTask(new GetCategoryResponse
 				{
-					Id = commodity.Id,
-					Name = commodity.Name,
-					Description = commodity.Description,
-					ImageLink = commodity.ImageLink
-				}) ?? new List<CategoryItem>()
-			});
+					Id = category.Id,
+					CategoryName = category.Name,
+					Data = catalogItems?.Select(commodity => new CategoryItem
+					{
+						Id = commodity.Id,
+						Name = commodity.Name,
+						Description = commodity.Description,
+						ImageLink = commodity.ImageLink
+					}) ?? new List<CategoryItem>()
+				});
 		}
 	}
 }
