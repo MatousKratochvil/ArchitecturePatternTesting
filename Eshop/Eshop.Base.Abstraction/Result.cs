@@ -8,7 +8,6 @@ namespace Eshop.Base.Abstraction
 	/// </summary>
 	/// <typeparam name="T">Type of successful result</typeparam>
 	public sealed record Result<T>
-		where T : class
 	{
 		private Result(T value, Exception exception)
 		{
@@ -59,7 +58,7 @@ namespace Eshop.Base.Abstraction
 		/// </summary>
 		/// <param name="exception">Exception of result</param>
 		/// <returns>Unsuccessful operation wrapped in Result</returns>
-		public static Result<T> Failed(Exception exception) => new(null, exception);
+		public static Result<T> Failed(Exception exception) => new(default, exception);
 		
 		/// <summary>
 		/// Creates unsuccessful operation result wrapped in Task.FromResult

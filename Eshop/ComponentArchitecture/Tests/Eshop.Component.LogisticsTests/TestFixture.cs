@@ -1,8 +1,8 @@
-﻿using Eshop.Component.Catalog;
+﻿using Eshop.Component.Logistics;
 using MediatR;
 using Microsoft.Extensions.DependencyInjection;
 
-namespace Eshop.Component.CatalogTests
+namespace Eshop.Component.LogisticsTests
 {
 	public class TestFixture
 	{

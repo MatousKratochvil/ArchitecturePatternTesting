@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
@@ -31,7 +32,7 @@ namespace Eshop.Component.Finance.Application
 
 		public GetPaymentsHandler(IRepository<Payment, int> paymentRepository)
 		{
-			_paymentRepository = paymentRepository;
+			_paymentRepository = paymentRepository ?? throw new ArgumentNullException(nameof(paymentRepository));
 		}
 
 		public Task<Result<GetPaymentsResponse>> Handle(GetPaymentsRequest request, CancellationToken cancellationToken)

@@ -6,5 +6,6 @@ namespace Eshop.Component.Finance.Infrastructure.Context
 	internal class FinanceContext : DbContext
 	{
 		private DbSet<Payment> Payments { get; set; }
+		private DbSet<Commodity> Commodities { get; set; }
 	}
 }

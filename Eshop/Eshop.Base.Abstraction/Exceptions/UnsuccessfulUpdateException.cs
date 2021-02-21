@@ -4,11 +4,11 @@ using System.Runtime.Serialization;
 namespace Eshop.Base.Abstraction.Exceptions
 {
 	[Serializable]
-	public class NotFoundException : Exception
+	public class UnsuccessfulUpdateException : Exception
 	{
 		public string DomainName { get; }
-		public object Id { get; }
 
+		public object[] Values { get; }
 		//
 		// For guidelines regarding the creation of new exception types, see
 		//    http://msdn.microsoft.com/library/default.asp?url=/library/en-us/cpgenref/html/cpconerrorraisinghandlingguidelines.asp
@@ -16,17 +16,14 @@ namespace Eshop.Base.Abstraction.Exceptions
 		//    http://msdn.microsoft.com/library/default.asp?url=/library/en-us/dncscol/html/csharp07192001.asp
 		//
 
-		public NotFoundException()
-		{
-		}
-
-		public NotFoundException(string domainName, object id) : base($"NotFound - {domainName}: {id}")
+		public UnsuccessfulUpdateException(string domainName, params object[] values) 
+			: base($"UnsuccessfulUpdate - {domainName} with values: {{ {string.Join(";", values)} }}")
 		{
 			DomainName = domainName;
-			Id = id;
+			Values = values;
 		}
 
-		protected NotFoundException(
+		protected UnsuccessfulUpdateException(
 			SerializationInfo info,
 			StreamingContext context) : base(info, context)
 		{

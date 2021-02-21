@@ -1,4 +1,8 @@
-﻿using Microsoft.Extensions.DependencyInjection;
+﻿using Eshop.Base.Abstraction.Infrastructure;
+using Eshop.Component.Logistics.Domain;
+using Eshop.Component.Logistics.Infrastructure;
+using MediatR;
+using Microsoft.Extensions.DependencyInjection;
 
 namespace Eshop.Component.Logistics
 {
@@ -13,6 +17,9 @@ namespace Eshop.Component.Logistics
 		/// <param name="services">Dependency injection services collection</param>
 		public void AddComponent(IServiceCollection services)
 		{
+			services.AddMediatR(typeof(Setup).Assembly);
+
+			services.AddTransient<IRepository<PickingPoint, int>, PickingPointRepository>();
 		}
 	}
 }

@@ -11,9 +11,9 @@ using Microsoft.Extensions.DependencyInjection;
 using NSubstitute;
 using Xunit;
 
-namespace Eshop.Component.CatalogTests
+namespace Eshop.Component.FinanceTests.ApplicationTests
 {
-	public class ApplicationsTests : IClassFixture<TestFixture>
+	public class GetPaymentTests : IClassFixture<TestFixture>
 	{
 		private IRepository<Payment, int> _paymentRepository =
 			Substitute.For<IRepository<Payment, int>>();
@@ -22,7 +22,7 @@ namespace Eshop.Component.CatalogTests
 
 		private IServiceProvider _serviceProvider;
 		
-		public ApplicationsTests(TestFixture fixture)
+		public GetPaymentTests(TestFixture fixture)
 		{
 			var services = fixture.Services;
 
