@@ -21,7 +21,7 @@ namespace Eshop.Component.Catalog.Application
 	{
 		public int Id { get; set; }
 		public string CategoryName { get; set; }
-		public IEnumerable<CategoryItem> Data { get; set; }
+		public IReadOnlyList<CategoryItem> Data { get; set; }
 	}
 
 	public class CategoryItem
@@ -71,7 +71,7 @@ namespace Eshop.Component.Catalog.Application
 						Name = commodity.Name,
 						Description = commodity.Description,
 						ImageLink = commodity.ImageLink
-					}) ?? new List<CategoryItem>()
+					}).ToList().AsReadOnly() ?? new List<CategoryItem>().AsReadOnly()
 				});
 		}
 	}

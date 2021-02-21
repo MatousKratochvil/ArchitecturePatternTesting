@@ -1,4 +1,8 @@
-﻿using Microsoft.Extensions.DependencyInjection;
+﻿using Eshop.Base.Abstraction.Infrastructure;
+using Eshop.Component.Finance.Domain;
+using Eshop.Component.Finance.Infrastructure;
+using MediatR;
+using Microsoft.Extensions.DependencyInjection;
 
 namespace Eshop.Component.Finance
 {
@@ -13,6 +17,9 @@ namespace Eshop.Component.Finance
 		/// <param name="services">Dependency injection services collection</param>
 		public void AddComponent(IServiceCollection services)
 		{
+			services.AddMediatR(typeof(Setup).Assembly);
+
+			services.AddTransient<IRepository<Payment, int>, PaymentRepository>();
 		}
 	}
 }
